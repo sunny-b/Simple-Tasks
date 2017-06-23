@@ -1,0 +1,17 @@
+{
+  "name": "ToDoBackbone",
+  "description": "Todo app using Backbone JS",
+  "main": "",
+  "authors": [
+    "Sunny <sjbeatteay@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
