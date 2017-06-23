@@ -1,0 +1,27 @@
+<input type="checkbox" id="menu-toggle">
+<label for="menu-toggle"><img src="assets/burger.png" alt="menu item"></label>
+<div class="header_content">
+  <div class="all_todos">
+    <div class="col" data-cate="all">
+      <h1>All Todos</h1>
+      <span class="small_number">{{totalAll}}</span>
+    </div>
+    <nav>
+      <ul id="side-tasks"></ul>
+    </nav>
+  </div>
+
+  <div class="completed">
+    <div class="col" data-cate="complete">
+      <h1>Completed</h1>
+      <span class="small_number">{{totalCompleted}}</span>
+    </div>
+    <nav>
+      <ul>
+        {{#each completedTasks}}
+        {{> sidebarTask}}
+        {{/each}}
+      </ul>
+    </nav>
+  </div>
+</div>
