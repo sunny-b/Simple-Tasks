@@ -37,7 +37,7 @@ Todos.prototype.compareDueDates = function(todo1, todo2) {
   } else if (todo2.year === 'Year' || +todo1.year > +todo2.year) {
     return 1
   } else {
-    if (todo1.month === 'Month' +todo1.month < +todo2.month) {
+    if (todo1.month === 'Month' || +todo1.month < +todo2.month) {
         return -1
     } else if (todo2.month === 'Month' || +todo1.month > +todo2.month) {
       return 1

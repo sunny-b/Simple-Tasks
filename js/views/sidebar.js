@@ -6,8 +6,8 @@ var SidebarView = Backbone.View.extend({
   },
   render: function() {
     var collection = this.collection;
-    var allTodos = collection.sortedTodos();
-    var doneTodos = collection.sortedDoneTodos();
+    var allTodos = collection.groupedTodos();
+    var doneTodos = collection.groupedDoneTodos();
 
     this.$el.html($(this.template({ allTasks: allTodos,
                                     totalAll: collection.all().length,

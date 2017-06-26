@@ -19,27 +19,24 @@ var Todos = Backbone.Collection.extend({
   filterBySection: function() {
     var category = this.currentSection.category;
     var isComplete = this.currentSection.isComplete;
+    var all = this.sort().all();
+    var completed = this.sort().completed();
     var filteredTodos;
 
-    this.sort();
-
     if (category === 'All Todos') {
-      filteredTodos = this.all();
+      filteredTodos = all;
     } else if (category === 'Completed') {
-      filteredTodos = this.completed();
+      filteredTodos = completed;
     } else {
-      if (isComplete) {
-        filteredTodos = this.completed().filter(function(todo) {
-          return todo.dueDate === category;
-        });
-      } else {
-        filteredTodos = this.all().filter(function(todo) {
-          return todo.dueDate === category;
-        });
-      }
+      filteredTodos = isComplete ? this.filterDueDate(completed) : this.filterDueDate(all);
     }
 
     return filteredTodos;
+  },
+  filterDueDate: function(collection) {
+    return collection.filter(function(todo) {
+      return todo.dueDate === category;
+    });
   },
   delete: function($e) {
     var todo = this.getTodo($e);
@@ -51,18 +48,20 @@ var Todos = Backbone.Collection.extend({
     var todo = this.getTodo($e);
     var isNew = todo.get('id') === this.currentID;
 
-    if (isNew) {
-      this.currentID = this.currentID + 1;
-      this.updateCurrentSection();
-    }
-
-    this.merge(todo, formInfo);
+    this.updateID(isNew);
+    this.mergeToCollection(todo, formInfo);
     this.trigger('updateTodos')
     this.save();
   },
   merge: function(todo, formInfo) {
     formInfo.forEach(function(field) { todo.set(field.name, field.value); });
     this.add(todo, {merge: true});
+  },
+  updateID: function(isNew) {
+    if (isNew) {
+      this.currentID = this.currentID + 1;
+      this.updateCurrentSection();
+    }
   },
   save: function() {
     localStorage['todos'] = JSON.stringify(this.toJSON());
@@ -74,23 +73,30 @@ var Todos = Backbone.Collection.extend({
 
     return todo ? todo : new Todo({ id: this.currentID });
   },
-  groupTodos: function(todosGroup) {
+  groupByDueDate: function(todosGroup) {
     var seen = [];
+    var self = this;
 
-    return todosGroup.sort(this.compareDueDates).reduce(function(arr, todo) {
+    return todosGroup.reduce(function(arr, todo) {
       if (seen.includes(todo.dueDate)) {
-        arr.filter(function(obj) {
-          return obj.dueDate === todo.dueDate;
-        })[0].total += 1;
+        self.incrementTotal(arr, todo);
       } else {
         seen.push(todo.dueDate);
-        arr.push({ dueDate: todo.dueDate,
-                   total: 1,
-                   data: todo.dueDate.replace(/[\s]/g, '') });
+        self.pushToArr(arr, todo);
       }
-
+      
       return arr;
     }, []);
+  },
+  incrementTotal: function(arr, todo) {
+    arr.filter(function(obj) {
+      return obj.dueDate === todo.dueDate;
+    })[0].total += 1;
+  },
+  pushToArr: function(arr, todo ) {
+    arr.push({ dueDate: todo.dueDate,
+               total: 1,
+               data: todo.dueDate.replace(/[\s]/g, '') });
   },
   compareDueDates: function(todo1, todo2) {
     if (todo1.year === 'Year' || +todo1.year < +todo2.year) {
@@ -99,7 +105,7 @@ var Todos = Backbone.Collection.extend({
       return 1
     } else {
       if (todo1.month === 'Month' +todo1.month < +todo2.month) {
-          return -1
+        return -1
       } else if (todo2.month === 'Month' || +todo1.month > +todo2.month) {
         return 1
       } else {
@@ -107,10 +113,14 @@ var Todos = Backbone.Collection.extend({
       }
     }
   },
-  sortedTodos: function() {
+  groupTodos: function(collection) {
+    var sortedTodos = collection.sort(this.compareDueDates);
+    return this.groupByDueDate(sortedTodos);
+  },
+  groupedTodos: function() {
     return this.groupTodos(this.all());
   },
-  sortedDoneTodos: function() {
+  groupedDoneTodos: function() {
     return this.groupTodos(this.completed());
   },
   toggle: function($e) {
