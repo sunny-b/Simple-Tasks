@@ -112,11 +112,7 @@ Todos.prototype.update = function($e) {
 };
 
 Todos.prototype.createDueDate = function(todo) {
-  if (todo.month === 'Month' || todo.year === 'Year') {
-    todo.dueDate = 'No Due Date'
-  } else {
-    todo.dueDate = todo.month + '/' + todo.year.slice(2);
-  }
+  
 }
 
 Todos.prototype.save = function(todo, isNew) {
