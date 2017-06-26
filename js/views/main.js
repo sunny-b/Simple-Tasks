@@ -4,18 +4,20 @@ var MainView = Backbone.View.extend({
   events: {
     'click .add-todo, .edit': 'showModal',
     'click .modal_layer': 'hideModal',
-    'submit #modalForm': 'updateTodos',
-
+    'submit .modal': 'updateTodos',
+    'click .trash-container': 'deleteTodo',
+    'click .todo-container, .check': 'toggleComplete',
+    'click button': 'markTodo'
   },
   render: function() {
     var collection = this.collection;
     var currentSection = collection.currentSection;
     var filteredTodos = collection.filterBySection();
-
+    
     this.$el.html($(this.template({ category: currentSection.category,
                                     total: filteredTodos.length,
                                     todoTasks: filteredTodos,
-                                    currentId: collection.lastID })));
+                                    currentId: collection.currentID })));
   },
   showModal: function(e) {
     e.preventDefault();
@@ -37,8 +39,35 @@ var MainView = Backbone.View.extend({
 
     this.collection.update($e);
   },
+  deleteTodo: function(e) {
+    e.preventDefault();
+    var $e = $(e.target);
+
+    this.collection.delete($e);
+  },
+  toggleComplete: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $e = $(e.target);
+
+    this.toggleTodo($e);
+  },
+  toggleTodo: function($e) {
+    this.collection.toggle($e);
+  },
+  markTodo: function(e) {
+    e.preventDefault();
+    var $e = $(e.target);
+    var id = $e.closest('[data-id]').data('id');
+
+    if (id === this.collection.currentID) {
+      alert('Cannot be marked as complete since it has not been created yet!');
+    } else {
+      this.toggleTodo($e);
+    }
+  },
   initialize: function() {
     this.render();
-    this.listenTo(this.collection, 'updateSection add remove', this.render);
+    this.listenTo(this.collection, 'updateSection updateTodos remove toggleComplete', this.render);
   }
 });

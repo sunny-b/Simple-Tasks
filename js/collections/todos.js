@@ -1,10 +1,10 @@
 var Todos = Backbone.Collection.extend({
   model: Todo,
-  lastID: 0,
   comparator: 'completed',
+  currentID: JSON.parse(localStorage['id'] || '1'),
   currentSection: {},
   completed: function() {
-    return _(this.toJSON).where({'completed': true});
+    return _(this.toJSON()).where({'completed': true});
   },
   all: function() {
     return this.toJSON();
@@ -20,6 +20,8 @@ var Todos = Backbone.Collection.extend({
     var category = this.currentSection.category;
     var isComplete = this.currentSection.isComplete;
     var filteredTodos;
+
+    this.sort();
 
     if (category === 'All Todos') {
       filteredTodos = this.all();
@@ -37,27 +39,40 @@ var Todos = Backbone.Collection.extend({
       }
     }
 
-    return filteredTodos.sort();
+    return filteredTodos;
+  },
+  delete: function($e) {
+    var todo = this.getTodo($e);
+    this.remove(todo);
+    this.save();
   },
   update: function($e) {
     var formInfo = $e.serializeArray();
     var todo = this.getTodo($e);
-    var isNew = todo.get('id') === this.lastID;
+    var isNew = todo.get('id') === this.currentID;
 
     if (isNew) {
-      this.lastID++;
+      this.currentID = this.currentID + 1;
       this.updateCurrentSection();
     }
 
+    this.merge(todo, formInfo);
+    this.trigger('updateTodos')
+    this.save();
+  },
+  merge: function(todo, formInfo) {
     formInfo.forEach(function(field) { todo.set(field.name, field.value); });
     this.add(todo, {merge: true});
+  },
+  save: function() {
     localStorage['todos'] = JSON.stringify(this.toJSON());
+    localStorage['id'] = JSON.stringify(this.currentID);
   },
   getTodo: function($e) {
     var id = +$e.closest('[data-id]').data('id');
     var todo = this.findWhere({ id: id });
 
-    return todo ? todo : new Todo({ id: this.lastID + 1 });
+    return todo ? todo : new Todo({ id: this.currentID });
   },
   groupTodos: function(todosGroup) {
     var seen = [];
@@ -97,6 +112,13 @@ var Todos = Backbone.Collection.extend({
   },
   sortedDoneTodos: function() {
     return this.groupTodos(this.completed());
+  },
+  toggle: function($e) {
+    var todo = this.getTodo($e);
+
+    todo.set('completed', !(todo.get('completed')));
+    this.trigger('toggleComplete');
+    this.save();
   },
   initialize: function() {
     this.updateCurrentSection();

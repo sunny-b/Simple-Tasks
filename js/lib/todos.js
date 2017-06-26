@@ -81,7 +81,7 @@ Todos.prototype.sortByComplete = function(collection) {
   var notDone = allTodos.filter(function(todo) {
     return !todo.completed
   }).sort(function(todo1, todo2) {
-    return todo1 - todo2;
+    return todo1.id - todo2.id;
   });
 
   var done = allTodos.filter(function(todo) {

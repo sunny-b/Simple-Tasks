@@ -42,4 +42,4 @@ var App = {
     this.renderPage();
     this.bindEvents();
   }
-}
+};

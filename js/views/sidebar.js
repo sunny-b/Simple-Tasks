@@ -41,6 +41,6 @@ var SidebarView = Backbone.View.extend({
   initialize: function() {
     this.render();
     this.listenTo(this.collection, 'updateSection', this.setSelected);
-    this.listenTo(this.collection, 'add remove', this.render);
+    this.listenTo(this.collection, 'updateTodos remove toggleComplete', this.render);
   }
 });

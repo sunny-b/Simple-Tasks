@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-US">
   <head>
-    <title>249 Assessment</title>
+    <title>Backbone Todo Application</title>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/style.css">
@@ -156,13 +156,15 @@
 
       <div class="buttons">
         <input type="submit" value="Save">
-        <button class="complete">
-          {{#if completed}}
+        {{#if completed}}
+        <button class="incomplete">
           Mark As Incomplete
-          {{else}}
-          Mark As Complete
-          {{/if}}
         </button>
+        {{else}}
+        <button class="complete">
+          Mark As Complete
+        </button>
+        {{/if}}
       </div>
     </script>
 
