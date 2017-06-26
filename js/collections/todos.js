@@ -82,7 +82,7 @@ var Todos = Backbone.Collection.extend({
         self.incrementTotal(arr, todo);
       } else {
         seen.push(todo.dueDate);
-        self.pushToArr(arr, todo);
+        self.pushTo(arr, todo);
       }
       
       return arr;
@@ -93,7 +93,7 @@ var Todos = Backbone.Collection.extend({
       return obj.dueDate === todo.dueDate;
     })[0].total += 1;
   },
-  pushToArr: function(arr, todo ) {
+  pushTo: function(arr, todo ) {
     arr.push({ dueDate: todo.dueDate,
                total: 1,
                data: todo.dueDate.replace(/[\s]/g, '') });
