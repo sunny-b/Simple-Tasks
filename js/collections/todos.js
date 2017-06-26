@@ -53,7 +53,7 @@ var Todos = Backbone.Collection.extend({
     this.trigger('updateTodos')
     this.save();
   },
-  merge: function(todo, formInfo) {
+  mergeToCollection: function(todo, formInfo) {
     formInfo.forEach(function(field) { todo.set(field.name, field.value); });
     this.add(todo, {merge: true});
   },
@@ -104,7 +104,7 @@ var Todos = Backbone.Collection.extend({
     } else if (todo2.year === 'Year' || +todo1.year > +todo2.year) {
       return 1
     } else {
-      if (todo1.month === 'Month' +todo1.month < +todo2.month) {
+      if (todo1.month === 'Month' || +todo1.month < +todo2.month) {
         return -1
       } else if (todo2.month === 'Month' || +todo1.month > +todo2.month) {
         return 1
