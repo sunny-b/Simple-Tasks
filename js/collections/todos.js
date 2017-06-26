@@ -59,6 +59,45 @@ var Todos = Backbone.Collection.extend({
 
     return todo ? todo : new Todo({ id: this.lastID + 1 });
   },
+  groupTodos: function(todosGroup) {
+    var seen = [];
+
+    return todosGroup.sort(this.compareDueDates).reduce(function(arr, todo) {
+      if (seen.includes(todo.dueDate)) {
+        arr.filter(function(obj) {
+          return obj.dueDate === todo.dueDate;
+        })[0].total += 1;
+      } else {
+        seen.push(todo.dueDate);
+        arr.push({ dueDate: todo.dueDate,
+                   total: 1,
+                   data: todo.dueDate.replace(/[\s]/g, '') });
+      }
+
+      return arr;
+    }, []);
+  },
+  compareDueDates: function(todo1, todo2) {
+    if (todo1.year === 'Year' || +todo1.year < +todo2.year) {
+        return -1
+    } else if (todo2.year === 'Year' || +todo1.year > +todo2.year) {
+      return 1
+    } else {
+      if (todo1.month === 'Month' +todo1.month < +todo2.month) {
+          return -1
+      } else if (todo2.month === 'Month' || +todo1.month > +todo2.month) {
+        return 1
+      } else {
+        return 0
+      }
+    }
+  },
+  sortedTodos: function() {
+    return this.groupTodos(this.all());
+  },
+  sortedDoneTodos: function() {
+    return this.groupTodos(this.completed());
+  },
   initialize: function() {
     this.updateCurrentSection();
   }

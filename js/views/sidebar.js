@@ -5,13 +5,14 @@ var SidebarView = Backbone.View.extend({
     'click .col, .sidebar-task': 'filterTodos'
   },
   render: function() {
-    var allTodos = this.collection.all();
-    var doneTodos = this.collection.completed();
+    var collection = this.collection;
+    var allTodos = collection.sortedTodos();
+    var doneTodos = collection.sortedDoneTodos();
 
     this.$el.html($(this.template({ allTasks: allTodos,
-                                    totalAll: allTodos.length,
+                                    totalAll: collection.all().length,
                                     completedTasks: doneTodos,
-                                    totalCompleted: doneTodos.length })));
+                                    totalCompleted: collection.completed().length })));
     this.setSelected();
   },
   setSelected: function() {
