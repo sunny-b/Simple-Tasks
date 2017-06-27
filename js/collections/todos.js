@@ -28,12 +28,12 @@ var Todos = Backbone.Collection.extend({
     } else if (category === 'Completed') {
       filteredTodos = completed;
     } else {
-      filteredTodos = isComplete ? this.filterDueDate(completed) : this.filterDueDate(all);
+      filteredTodos = isComplete ? this.filterDueDate(completed, category) : this.filterDueDate(all, category);
     }
 
     return filteredTodos;
   },
-  filterDueDate: function(collection) {
+  filterDueDate: function(collection, category) {
     return collection.filter(function(todo) {
       return todo.dueDate === category;
     });

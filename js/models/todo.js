@@ -11,7 +11,7 @@ var Todo = Backbone.Model.extend({
   createDueDate: function() {
     var newDate;
 
-    if (this.month === 'Month' || this.year === 'Year') {
+    if (this.get('month') === 'Month' || this.get('year') === 'Year') {
       newDate = 'No Due Date';
     } else {
       newDate = this.get('month') + '/' + this.get('year').slice(2);
